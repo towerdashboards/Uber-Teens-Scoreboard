@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin – Data Processor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{--bg:#0e1117;--surface:#161b22;--surface-raised:#1c2129;--border:#2a313a;--text-primary:#e6edf3;--text-secondary:#8b949e;--text-muted:#484f58;--approved:#3fb950;--approved-bg:rgba(63,185,80,0.08);--pipeline:#58a6ff;--accent:#ffa657;--rejected:#f85149;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;padding:2rem;display:flex;justify-content:center;}
+  .admin{max-width:700px;width:100%;}
+  h1{font-family:'Fraunces',serif;font-weight:800;font-size:1.6rem;text-align:center;margin-bottom:0.3rem;}
+  .subtitle{text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:2.5rem;}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;position:relative;overflow:hidden;}
+  .step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .step:nth-child(1)::before{background:var(--pipeline);}
+  .step:nth-child(2)::before{background:var(--accent);}
+  .step-num{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);font-weight:500;margin-bottom:0.6rem;}
+  .step-title{font-family:'Fraunces',serif;font-weight:600;font-size:1rem;margin-bottom:0.3rem;}
+  .step-desc{font-size:0.75rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;}
+  .drop-zone{border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;}
+  .drop-zone:hover,.drop-zone.dragover{border-color:var(--pipeline);background:rgba(88,166,255,0.04);}
+  .drop-zone.loaded{border-color:var(--approved);border-style:solid;background:var(--approved-bg);}
+  .drop-zone input{display:none;}
+  .drop-zone .dz-text{font-size:0.8rem;color:var(--text-muted);}
+  .drop-zone.loaded .dz-text{color:var(--approved);}
+  .drop-zone .dz-icon{font-size:1.8rem;margin-bottom:0.5rem;display:block;}
+  .generate-btn{width:100%;padding:1rem;font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;background:linear-gradient(135deg,#2ea043,#3fb950);color:#fff;border:none;border-radius:12px;cursor:pointer;transition:opacity 0.2s,transform 0.2s;margin-top:1rem;}
+  .generate-btn:hover{opacity:0.9;transform:translateY(-1px);}
+  .generate-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+  .log{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-top:1rem;display:none;max-height:300px;overflow-y:auto;}
+  .log.visible{display:block;}
+  .log-line{font-size:0.7rem;color:var(--text-secondary);margin-bottom:0.3rem;font-family:'DM Sans',monospace;}
+  .log-line.success{color:var(--approved);}
+  .log-line.error{color:var(--rejected);}
+  .log-line.info{color:var(--pipeline);}
+  .warning-box{background:rgba(255,166,87,0.08);border:1px solid rgba(255,166,87,0.2);border-radius:8px;padding:0.8rem 1rem;margin-top:1.5rem;font-size:0.7rem;color:var(--accent);line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="admin">
+  <h1>Dashboard Data Processor</h1>
+  <div class="subtitle">Upload spreadsheets to generate dashboard data. No raw data leaves your browser.</div>
+
+  <div class="step">
+    <div class="step-num">Step 1</div>
+    <div class="step-title">Uber Teen Dashboard (.xlsx)</div>
+    <div class="step-desc">The main spreadsheet with "Supervisor Campaign" and "DropDowns" tabs.</div>
+    <div class="drop-zone" id="dz1" onclick="document.getElementById('f1').click()">
+      <input type="file" id="f1" accept=".xlsx,.xls" onchange="handleFile(this,1)">
+      <span class="dz-icon">&#128196;</span>
+      <span class="dz-text" id="dz1text">Drop .xlsx here or click to browse</span>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 2</div>
+    <div class="step-title">Approved Drivers (.csv or .xlsx)</div>
+    <div class="step-desc">The drivers approved list with eligibility dates in column E.</div>
+    <div class="drop-zone" id="dz2" onclick="document.getElementById('f2').click()">
+      <input type="file" id="f2" accept=".xlsx,.xls,.csv" onchange="handleFile(this,2)">
+      <span class="dz-icon">&#128196;</span>
+      <span class="dz-text" id="dz2text">Drop .csv or .xlsx here or click to browse</span>
+    </div>
+  </div>
+
+  <button class="generate-btn" id="genBtn" disabled onclick="processAll()">Generate data.json</button>
+
+  <div class="log" id="log"></div>
+
+  <div class="warning-box">
+    &#128274; All processing happens locally in your browser. Raw driver data is never uploaded anywhere. Only aggregated metrics are saved to data.json.
+  </div>
+</div>
+
+<script>
+var file1=null, file2=null;
+var wb1=null, wb2data=null;
+
+// Config
+var APPROVED_TARGET = 500;
+var TEAM_TARGETS = {approved:100, pipeline:200};
+var CUTOFF = new Date(2026,2,23,0,0,0); // March 23 2026
+var DAILY_START = new Date(2026,2,23);
+var DAILY_END = new Date(2026,3,30);
+var NAME_MAP = {"jonthan":"Jonathan"};
+var HARD_SITES = {"destiny":"Mission","jonathan":"Mission","jonthan":"Mission","sheryl":"Mission","markese":"Mission"};
+var EXCLUDE_SUPS = {"hrc":true};
+var PIPELINE_K = {"interested, waiting for paperwork":1,"waiting for fingerprinting":1,"waiting for uber approval":1};
+var FP_FILTER = {"interested, waiting for paperwork":1,"waiting for fingerprinting":1};
+
+function handleFile(input,num){
+  var f=input.files[0]; if(!f)return;
+  if(num===1){file1=f;document.getElementById("dz1").classList.add("loaded");document.getElementById("dz1text").textContent="✓ "+f.name;}
+  else{file2=f;document.getElementById("dz2").classList.add("loaded");document.getElementById("dz2text").textContent="✓ "+f.name;}
+  document.getElementById("genBtn").disabled=!(file1&&file2);
+}
+
+// Drag and drop
+["dz1","dz2"].forEach(function(id,idx){
+  var dz=document.getElementById(id);
+  dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("dragover");});
+  dz.addEventListener("dragleave",function(){dz.classList.remove("dragover");});
+  dz.addEventListener("drop",function(e){
+    e.preventDefault();dz.classList.remove("dragover");
+    var f=e.dataTransfer.files[0]; if(!f)return;
+    var inp=document.getElementById("f"+(idx+1));
+    var dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;
+    handleFile(inp,idx+1);
+  });
+});
+
+function log(msg,cls){
+  var el=document.getElementById("log");
+  el.classList.add("visible");
+  el.innerHTML+="<div class='log-line "+(cls||"")+"'>"+msg+"</div>";
+  el.scrollTop=el.scrollHeight;
+}
+
+function parseTime(val){
+  if(val instanceof Date){return val.getHours()+val.getMinutes()/60;}
+  if(typeof val==="number"){
+    // Excel serial time
+    var totalSec=Math.round(val*86400);
+    var h=Math.floor(totalSec/3600)%24;
+    var m=Math.floor((totalSec%3600)/60);
+    return h+m/60;
+  }
+  if(typeof val==="string"){
+    var match=val.match(/(\d+):(\d+):\d+\s*(AM|PM)/i);
+    if(match){
+      var h=parseInt(match[1]),mins=parseInt(match[2]),ap=match[3].toUpperCase();
+      if(ap==="AM"&&h===12)h=0; else if(ap==="PM"&&h!==12)h+=12;
+      return h+mins/60;
+    }
+  }
+  return null;
+}
+
+function fpSlot(h){var r=Math.round(h);return(r>=4&&r<=22)?r-4:null;}
+
+function processAll(){
+  var logEl=document.getElementById("log");
+  logEl.innerHTML="";logEl.classList.add("visible");
+  log("Starting processing...","info");
+
+  var reader1=new FileReader();
+  reader1.onload=function(e){
+    try{
+      wb1=XLSX.read(e.target.result,{type:"array",cellDates:true});
+      log("✓ Main spreadsheet loaded: "+wb1.SheetNames.join(", "),"success");
+      loadFile2();
+    }catch(err){log("✗ Error reading main spreadsheet: "+err.message,"error");}
+  };
+  reader1.readAsArrayBuffer(file1);
+}
+
+function loadFile2(){
+  var reader2=new FileReader();
+  reader2.onload=function(e){
+    try{
+      var wb2=XLSX.read(e.target.result,{type:"array",cellDates:true});
+      var sheetName=wb2.SheetNames[0];
+      wb2data=XLSX.utils.sheet_to_json(wb2.Sheets[sheetName],{header:1,defval:""});
+      log("✓ Approved drivers loaded: "+wb2data.length+" rows","success");
+      crunchData();
+    }catch(err){log("✗ Error reading approved file: "+err.message,"error");}
+  };
+  reader2.readAsArrayBuffer(file2);
+}
+
+function crunchData(){
+  log("Processing Supervisor Campaign...","info");
+
+  // 1. Get supervisors from DropDowns
+  var ddSheet=wb1.Sheets["DropDowns"];
+  if(!ddSheet){log("✗ 'DropDowns' tab not found","error");return;}
+  var ddData=XLSX.utils.sheet_to_json(ddSheet,{header:1,defval:""});
+  var supList=[];
+  for(var i=1;i<ddData.length;i++){
+    var val=(ddData[i][2]||"").toString().trim();
+    if(val&&!EXCLUDE_SUPS[val.toLowerCase()])supList.push(val);
+  }
+  log("Supervisors: "+supList.join(", "),"info");
+
+  // 2. Get approved UUIDs from CSV (eligibility_date >= cutoff)
+  // Find the header row (contains "driver_uuid")
+  var headerIdx=-1;
+  for(var i=0;i<Math.min(10,wb2data.length);i++){
+    for(var j=0;j<wb2data[i].length;j++){
+      if(String(wb2data[i][j]).toLowerCase().indexOf("driver_uuid")>=0){headerIdx=i;break;}
+    }
+    if(headerIdx>=0)break;
+  }
+  if(headerIdx<0){log("✗ Could not find header row in approved file","error");return;}
+
+  var headers=wb2data[headerIdx];
+  var uuidCol=-1,eligCol=-1;
+  for(var j=0;j<headers.length;j++){
+    var h=String(headers[j]).toLowerCase().trim();
+    if(h.indexOf("driver_uuid")>=0)uuidCol=j;
+    if(h.indexOf("eligibility")>=0)eligCol=j;
+  }
+  log("Approved file: UUID col="+uuidCol+", Eligibility col="+eligCol,"info");
+
+  var approvedUUIDs={};
+  var dailyCounts={};
+  // Init daily counts
+  var d=new Date(DAILY_START);
+  while(d<=DAILY_END){
+    dailyCounts[d.toISOString().slice(0,10)]=0;
+    d=new Date(d.getTime()+86400000);
+  }
+
+  for(var i=headerIdx+1;i<wb2data.length;i++){
+    var row=wb2data[i];
+    var uuid=String(row[uuidCol]||"").trim().toLowerCase();
+    var eligRaw=row[eligCol];
+    if(!uuid||uuid==="driver_uuid")continue;
+    var eligDate;
+    if(eligRaw instanceof Date){eligDate=eligRaw;}
+    else{eligDate=new Date(String(eligRaw));}
+    if(isNaN(eligDate.getTime()))continue;
+    if(eligDate>=CUTOFF){
+      approvedUUIDs[uuid]=1;
+      var dayKey=eligDate.toISOString().slice(0,10);
+      if(dailyCounts.hasOwnProperty(dayKey))dailyCounts[dayKey]++;
+    }
+  }
+  var totalApproved=Object.keys(approvedUUIDs).length;
+  log("Approved drivers (elig >= Mar 23): "+totalApproved,"success");
+
+  // Build daily arrays
+  var dailyLabels=[],dailyCountsArr=[];
+  d=new Date(DAILY_START);
+  while(d<=DAILY_END){
+    var key=d.toISOString().slice(0,10);
+    var mon=d.toLocaleString("en-US",{month:"short"});
+    var day=d.getDate();
+    dailyLabels.push(mon+" "+String(day).padStart(2,"0"));
+    dailyCountsArr.push(dailyCounts[key]||0);
+    d=new Date(d.getTime()+86400000);
+  }
+
+  // 3. Process Supervisor Campaign
+  var scSheet=wb1.Sheets["Supervisor Campaign"];
+  if(!scSheet){log("✗ 'Supervisor Campaign' tab not found","error");return;}
+  var scData=XLSX.utils.sheet_to_json(scSheet,{header:1,defval:""});
+
+  // Init metrics
+  var metrics={};var supSites={};
+  for(var i=0;i<supList.length;i++){
+    var sk=supList[i].toLowerCase();
+    var displayName=NAME_MAP[sk]||supList[i];
+    metrics[sk]={name:displayName,pipeline:0,approved:0,rejected:0,optedOut:0};
+    supSites[sk]={};
+  }
+  var siteMission={tbc:0,approved:0,pipeline:0,optedOut:0,rejected:0};
+  var siteDouglas={tbc:0,approved:0,pipeline:0,optedOut:0,rejected:0};
+  var tbcCount=0;
+  var mSlots=new Array(19).fill(0),dSlots=new Array(19).fill(0);
+  var mc=0,dc=0;
+
+  for(var i=1;i<scData.length;i++){
+    var row=scData[i];
+    if(!row[0]||String(row[0]).indexOf("#VALUE")>=0)continue;
+
+    var uuid=String(row[0]).trim().toLowerCase();
+    var teensStatus=String(row[3]||"").trim().toLowerCase();
+    var site=String(row[6]||"").trim();
+    var timeVal=row[7];
+    var supRaw=String(row[8]||"").trim();
+    var supKey=supRaw.toLowerCase();
+    var statusK=String(row[10]||"").trim().toLowerCase();
+    var statusO=String(row[14]||"").trim().toLowerCase();
+
+    // To be contacted
+    if(teensStatus==="to be contacted"&&(!statusK||statusK==="none"||statusK==="")){
+      tbcCount++;
+      if(site==="Mission")siteMission.tbc++;
+      else if(site==="Douglas")siteDouglas.tbc++;
+    }
+
+    // Approved
+    if(approvedUUIDs[uuid]){
+      if(metrics[supKey])metrics[supKey].approved++;
+      if(site==="Mission")siteMission.approved++;
+      else if(site==="Douglas")siteDouglas.approved++;
+    }
+
+    // Supervisor metrics
+    if(metrics[supKey]){
+      if(site==="Mission"||site==="Douglas"){
+        supSites[supKey][site]=(supSites[supKey][site]||0)+1;
+      }
+      if(PIPELINE_K[statusK])metrics[supKey].pipeline++;
+      if(statusK==="not interested")metrics[supKey].optedOut++;
+      if(statusO.indexOf("trustline rejected")>=0)metrics[supKey].rejected++;
+    }
+
+    // Site-level pipeline/opted/rejected
+    if(site==="Mission"){
+      if(PIPELINE_K[statusK])siteMission.pipeline++;
+      if(statusK==="not interested")siteMission.optedOut++;
+      if(statusO.indexOf("trustline rejected")>=0)siteMission.rejected++;
+    }else if(site==="Douglas"){
+      if(PIPELINE_K[statusK])siteDouglas.pipeline++;
+      if(statusK==="not interested")siteDouglas.optedOut++;
+      if(statusO.indexOf("trustline rejected")>=0)siteDouglas.rejected++;
+    }
+
+    // Fingerprinting
+    if(FP_FILTER[statusK]&&(site==="Mission"||site==="Douglas")){
+      var start=parseTime(timeVal);
+      if(start!==null){
+        var s1=fpSlot(start);
+        var s2h=start+8.25;if(s2h>=24)s2h-=24;
+        var s2=fpSlot(s2h);
+        if(site==="Mission"){
+          mc++;if(s1!==null)mSlots[s1]++;if(s2!==null)mSlots[s2]++;
+        }else{
+          dc++;if(s1!==null)dSlots[s1]++;if(s2!==null)dSlots[s2]++;
+        }
+      }
+    }
+  }
+
+  // Assign sites
+  var teams=[];
+  for(var i=0;i<supList.length;i++){
+    var sk=supList[i].toLowerCase();
+    var m=metrics[sk];
+    var hardSite=HARD_SITES[sk];
+    if(hardSite){m.site=hardSite;}
+    else{
+      var ss=supSites[sk];var best="";var bestN=0;
+      for(var s in ss){if(ss[s]>bestN){bestN=ss[s];best=s;}}
+      m.site=best;
+    }
+    teams.push({name:m.name,site:m.site,pipeline:m.pipeline,approved:m.approved,rejected:m.rejected,optedOut:m.optedOut});
+  }
+
+  log("To be contacted: "+tbcCount,"info");
+  log("Mission: pipe="+siteMission.pipeline+" appr="+siteMission.approved,"info");
+  log("Douglas: pipe="+siteDouglas.pipeline+" appr="+siteDouglas.approved,"info");
+  log("FP Mission drivers: "+mc+", Douglas: "+dc,"info");
+
+  // Build output
+  var output={
+    lastUpdated:new Date().toISOString(),
+    approvedTarget:APPROVED_TARGET,
+    teamTargets:TEAM_TARGETS,
+    totalApproved:totalApproved,
+    toBeContacted:tbcCount,
+    siteMission:siteMission,
+    siteDouglas:siteDouglas,
+    teams:teams,
+    dailyApproved:{labels:dailyLabels,counts:dailyCountsArr},
+    fingerprinting:{
+      mission:{hourly:mSlots,unique:mc},
+      douglas:{hourly:dSlots,unique:dc}
+    }
+  };
+
+  // Download
+  var blob=new Blob([JSON.stringify(output,null,2)],{type:"application/json"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;a.download="data.json";a.click();
+  URL.revokeObjectURL(url);
+
+  log("","");
+  log("✓ data.json generated and downloaded!","success");
+  log("Upload it to your GitHub repo to update the dashboard.","success");
+}
+</script>
+</body>
+</html>

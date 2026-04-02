@@ -1,0 +1,29 @@
+{
+  "lastUpdated": "2026-04-01T12:00:00",
+  "approvedTarget": 500,
+  "teamTargets": { "approved": 100, "pipeline": 200 },
+  "totalApproved": 15,
+  "toBeContacted": 524,
+  "siteMission": { "tbc": 218, "approved": 6, "pipeline": 202, "optedOut": 7, "rejected": 1 },
+  "siteDouglas": { "tbc": 301, "approved": 9, "pipeline": 173, "optedOut": 9, "rejected": 1 },
+  "teams": [
+    { "name": "David", "site": "Douglas", "pipeline": 35, "approved": 1, "rejected": 0, "optedOut": 0 },
+    { "name": "Destiny", "site": "Mission", "pipeline": 0, "approved": 0, "rejected": 0, "optedOut": 0 },
+    { "name": "Enrique", "site": "Douglas", "pipeline": 19, "approved": 1, "rejected": 0, "optedOut": 1 },
+    { "name": "Eric", "site": "Mission", "pipeline": 1, "approved": 0, "rejected": 0, "optedOut": 0 },
+    { "name": "Jonathan", "site": "Mission", "pipeline": 0, "approved": 0, "rejected": 0, "optedOut": 0 },
+    { "name": "Jorge", "site": "Mission", "pipeline": 83, "approved": 1, "rejected": 0, "optedOut": 1 },
+    { "name": "Markese", "site": "Mission", "pipeline": 0, "approved": 0, "rejected": 0, "optedOut": 0 },
+    { "name": "Nicholas", "site": "Douglas", "pipeline": 141, "approved": 3, "rejected": 1, "optedOut": 11 },
+    { "name": "Romeo", "site": "Mission", "pipeline": 95, "approved": 4, "rejected": 0, "optedOut": 3 },
+    { "name": "Sheryl", "site": "Mission", "pipeline": 0, "approved": 0, "rejected": 0, "optedOut": 0 }
+  ],
+  "dailyApproved": {
+    "labels": ["Mar 23","Mar 24","Mar 25","Mar 26","Mar 27","Mar 28","Mar 29","Mar 30","Mar 31","Apr 01","Apr 02","Apr 03","Apr 04","Apr 05","Apr 06","Apr 07","Apr 08","Apr 09","Apr 10","Apr 11","Apr 12","Apr 13","Apr 14","Apr 15","Apr 16","Apr 17","Apr 18","Apr 19","Apr 20","Apr 21","Apr 22","Apr 23","Apr 24","Apr 25","Apr 26","Apr 27","Apr 28","Apr 29","Apr 30"],
+    "counts": [3,1,0,1,2,4,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  },
+  "fingerprinting": {
+    "mission": { "hourly": [12,8,26,3,18,14,28,0,3,5,11,27,44,37,38,14,10,2,5], "unique": 200 },
+    "douglas": { "hourly": [15,11,10,5,12,7,1,0,5,4,10,5,29,24,24,9,10,7,0], "unique": 132 }
+  }
+}
