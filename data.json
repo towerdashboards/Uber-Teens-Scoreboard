@@ -1,17 +1,17 @@
 {
-  "lastUpdated": "2026-04-05T19:32:11.509Z",
+  "lastUpdated": "2026-04-07T00:25:28.998Z",
   "approvedTarget": 500,
   "teamTargets": {
     "approved": 100,
     "pipeline": 200
   },
   "totalApproved": 15,
-  "toBeContacted": 514,
+  "toBeContacted": 495,
   "siteMission": {
-    "tbc": 218,
+    "tbc": 199,
     "approved": 6,
-    "pipeline": 202,
-    "optedOut": 7,
+    "pipeline": 219,
+    "optedOut": 8,
     "rejected": 1
   },
   "siteDouglas": {
@@ -65,18 +65,18 @@
     {
       "name": "Nicholas",
       "site": "Douglas",
-      "pipeline": 141,
+      "pipeline": 139,
       "approved": 3,
       "rejected": 1,
-      "optedOut": 11
+      "optedOut": 10
     },
     {
       "name": "Romeo",
       "site": "Mission",
-      "pipeline": 94,
+      "pipeline": 113,
       "approved": 4,
       "rejected": 0,
-      "optedOut": 3
+      "optedOut": 5
     },
     {
       "name": "Sheryl",
@@ -192,25 +192,25 @@
       "hourly": [
         9,
         11,
-        16,
+        21,
+        20,
         13,
-        10,
-        22,
-        17,
+        23,
+        18,
         11,
         3,
         5,
-        11,
-        27,
-        30,
-        50,
-        35,
+        16,
+        34,
+        33,
+        51,
+        36,
         17,
         6,
         6,
         5
       ],
-      "unique": 199
+      "unique": 216
     },
     "douglas": {
       "hourly": [
