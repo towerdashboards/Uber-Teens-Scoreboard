@@ -271,10 +271,10 @@ function crunchData(){
     var teensStatus=String(row[3]||"").trim().toLowerCase();
     var site=String(row[6]||"").trim();
     var timeVal=row[7];
-    var supRaw=String(row[8]||"").trim();
+    var supRaw=String(row[9]||"").trim();
     var supKey=supRaw.toLowerCase();
-    var statusK=String(row[10]||"").trim().toLowerCase();
-    var statusO=String(row[14]||"").trim().toLowerCase();
+    var statusK=String(row[11]||"").trim().toLowerCase();
+    var statusO=String(row[15]||"").trim().toLowerCase();
 
     // To be contacted
     if(teensStatus==="to be contacted"&&(!statusK||statusK==="none"||statusK==="")){
