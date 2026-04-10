@@ -1,45 +1,45 @@
 {
-  "lastUpdated": "2026-04-08T18:51:17.674Z",
+  "lastUpdated": "2026-04-10T16:24:44.510048",
   "approvedTarget": 500,
   "teamTargets": {
     "approved": 100,
     "pipeline": 200
   },
-  "totalApproved": 16,
-  "toBeContacted": 920,
+  "totalApproved": 15,
+  "toBeContacted": 9,
   "siteMission": {
-    "tbc": 470,
+    "tbc": 4,
     "approved": 6,
-    "pipeline": 0,
-    "optedOut": 0,
-    "rejected": 0
+    "pipeline": 262,
+    "optedOut": 13,
+    "rejected": 4
   },
   "siteDouglas": {
-    "tbc": 445,
-    "approved": 10,
-    "pipeline": 0,
-    "optedOut": 0,
-    "rejected": 0
+    "tbc": 5,
+    "approved": 9,
+    "pipeline": 217,
+    "optedOut": 31,
+    "rejected": 1
   },
   "teams": [
     {
       "name": "Enrique",
-      "site": "",
-      "pipeline": 0,
-      "approved": 0,
+      "site": "Mission",
+      "pipeline": 19,
+      "approved": 1,
       "rejected": 0,
-      "optedOut": 0
+      "optedOut": 1
     },
     {
       "name": "Eric",
-      "site": "",
-      "pipeline": 0,
+      "site": "Douglas",
+      "pipeline": 1,
       "approved": 0,
       "rejected": 0,
       "optedOut": 0
     },
     {
-      "name": "Jonathan",
+      "name": "Jonthan",
       "site": "Mission",
       "pipeline": 0,
       "approved": 0,
@@ -48,11 +48,11 @@
     },
     {
       "name": "Jorge",
-      "site": "",
-      "pipeline": 0,
-      "approved": 0,
+      "site": "Mission",
+      "pipeline": 66,
+      "approved": 1,
       "rejected": 0,
-      "optedOut": 0
+      "optedOut": 1
     },
     {
       "name": "Markese",
@@ -64,19 +64,19 @@
     },
     {
       "name": "Nicholas",
-      "site": "",
-      "pipeline": 0,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
+      "site": "Douglas",
+      "pipeline": 185,
+      "approved": 3,
+      "rejected": 2,
+      "optedOut": 28
     },
     {
       "name": "Romeo",
-      "site": "",
-      "pipeline": 0,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
+      "site": "Mission",
+      "pipeline": 146,
+      "approved": 1,
+      "rejected": 1,
+      "optedOut": 8
     },
     {
       "name": "Sheryl",
@@ -96,11 +96,11 @@
     },
     {
       "name": "David",
-      "site": "",
-      "pipeline": 0,
-      "approved": 0,
+      "site": "Mission",
+      "pipeline": 35,
+      "approved": 2,
       "rejected": 0,
-      "optedOut": 0
+      "optedOut": 5
     }
   ],
   "dailyApproved": {
@@ -147,20 +147,20 @@
     ],
     "counts": [
       3,
-      0,
       1,
       0,
+      1,
+      2,
+      4,
       3,
       1,
-      5,
-      1,
-      1,
       0,
       0,
       0,
       0,
       0,
-      1,
+      0,
+      0,
       0,
       0,
       0,
@@ -190,51 +190,51 @@
   "fingerprinting": {
     "mission": {
       "hourly": [
+        20,
+        26,
+        27,
+        5,
+        23,
+        9,
+        15,
         0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+        4,
+        12,
+        12,
+        10,
+        19,
+        17,
+        26,
+        11,
+        23,
+        7,
+        12
       ],
-      "unique": 0
+      "unique": 164
     },
     "douglas": {
       "hourly": [
+        17,
+        12,
+        9,
+        10,
+        17,
+        7,
+        1,
         0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        9,
+        8,
+        9,
+        10,
+        22,
+        17,
+        10,
+        10,
+        8,
+        4,
         0
       ],
-      "unique": 0
+      "unique": 116
     }
   }
 }
