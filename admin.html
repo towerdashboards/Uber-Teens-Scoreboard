@@ -88,7 +88,8 @@ var DAILY_END = new Date(2026,3,30);
 var NAME_MAP = {"jonthan":"Jonathan"};
 var HARD_SITES = {"destiny":"Mission","jonathan":"Mission","jonthan":"Mission","sheryl":"Mission","markese":"Mission"};
 var EXCLUDE_SUPS = {"hrc":true};
-var PIPELINE_K = {"interested, waiting for paperwork":1,"waiting for fingerprinting":1,"waiting for uber approval":1};
+var PIPELINE_K = {"waiting for fingerprinting":1,"waiting for uber approval":1,"do not contact, uploaded by hrcs":1};
+var PIPELINE_EXCLUDE_O = {"uber approved":1,"trustline rejected":1};
 var FP_FILTER = {"interested, waiting for paperwork":1,"waiting for fingerprinting":1};
 
 function handleFile(input,num){
@@ -260,6 +261,7 @@ function crunchData(){
   var siteMission={tbc:0,approved:0,pipeline:0,optedOut:0,rejected:0};
   var siteDouglas={tbc:0,approved:0,pipeline:0,optedOut:0,rejected:0};
   var tbcCount=0;
+  var totalPipeline=0,totalRejected=0,totalOptedOut=0;
   var mSlots=new Array(19).fill(0),dSlots=new Array(19).fill(0);
   var mc=0,dc=0;
 
@@ -277,7 +279,7 @@ function crunchData(){
     var statusO=String(row[15]||"").trim().toLowerCase();
 
     // To be contacted
-    if(teensStatus==="to be contacted"&&(!statusK||statusK==="none"||statusK==="")){
+    if(teensStatus==="to be contacted"&&(!statusK||statusK==="none"||statusK===""||statusK==="needs to be contacted")){
       tbcCount++;
       if(site==="Mission")siteMission.tbc++;
       else if(site==="Douglas")siteDouglas.tbc++;
@@ -290,23 +292,31 @@ function crunchData(){
       else if(site==="Douglas")siteDouglas.approved++;
     }
 
+    // Check if pipeline-eligible (column L status matches AND column P not excluded)
+    var isPipeline=PIPELINE_K[statusK]&&!PIPELINE_EXCLUDE_O[statusO];
+
     // Supervisor metrics
     if(metrics[supKey]){
       if(site==="Mission"||site==="Douglas"){
         supSites[supKey][site]=(supSites[supKey][site]||0)+1;
       }
-      if(PIPELINE_K[statusK])metrics[supKey].pipeline++;
+      if(isPipeline)metrics[supKey].pipeline++;
       if(statusK==="not interested")metrics[supKey].optedOut++;
       if(statusO.indexOf("trustline rejected")>=0)metrics[supKey].rejected++;
     }
 
+    // Company-wide totals (all drivers regardless of supervisor)
+    if(isPipeline)totalPipeline++;
+    if(statusK==="not interested")totalOptedOut++;
+    if(statusO.indexOf("trustline rejected")>=0)totalRejected++;
+
     // Site-level pipeline/opted/rejected
     if(site==="Mission"){
-      if(PIPELINE_K[statusK])siteMission.pipeline++;
+      if(isPipeline)siteMission.pipeline++;
       if(statusK==="not interested")siteMission.optedOut++;
       if(statusO.indexOf("trustline rejected")>=0)siteMission.rejected++;
     }else if(site==="Douglas"){
-      if(PIPELINE_K[statusK])siteDouglas.pipeline++;
+      if(isPipeline)siteDouglas.pipeline++;
       if(statusK==="not interested")siteDouglas.optedOut++;
       if(statusO.indexOf("trustline rejected")>=0)siteDouglas.rejected++;
     }
@@ -343,6 +353,7 @@ function crunchData(){
   }
 
   log("To be contacted: "+tbcCount,"info");
+  log("Pipeline: "+totalPipeline+", Rejected: "+totalRejected+", Opted Out: "+totalOptedOut,"info");
   log("Mission: pipe="+siteMission.pipeline+" appr="+siteMission.approved,"info");
   log("Douglas: pipe="+siteDouglas.pipeline+" appr="+siteDouglas.approved,"info");
   log("FP Mission drivers: "+mc+", Douglas: "+dc,"info");
@@ -351,12 +362,13 @@ function crunchData(){
   var output={
     lastUpdated:new Date().toISOString(),
     approvedTarget:APPROVED_TARGET,
-    teamTargets:TEAM_TARGETS,
     totalApproved:totalApproved,
+    totalPipeline:totalPipeline,
+    totalRejected:totalRejected,
+    totalOptedOut:totalOptedOut,
     toBeContacted:tbcCount,
     siteMission:siteMission,
     siteDouglas:siteDouglas,
-    teams:teams,
     dailyApproved:{labels:dailyLabels,counts:dailyCountsArr},
     fingerprinting:{
       mission:{hourly:mSlots,unique:mc},

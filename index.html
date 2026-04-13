@@ -183,8 +183,7 @@
       <div class="site-summary anim" id="siteMission"></div>
       <div class="site-summary anim" id="siteDouglas" style="animation-delay:0.12s"></div>
     </div>
-    <div class="teams-grid" id="tg"></div>
-  </div>
+    </div>
   <div class="tab-content" id="tab-fingerprint">
     <div class="fp-container anim" style="margin-bottom:1.2rem">
       <div class="fp-header"><div class="fp-title">Mission</div><span class="fp-badge" id="fpBadgeMission"></span></div>
@@ -228,7 +227,7 @@ function launchConfetti(){
 }
 
 function render(D){
-  var TEAMS=D.teams, TGT=D.teamTargets, totalApproved=D.totalApproved;
+  var totalApproved=D.totalApproved;
 
   // Timestamp
   var dt=new Date(D.lastUpdated);
@@ -268,12 +267,10 @@ function render(D){
 
   // Company summary
   var sh="<div class='summary-metric tbc'><div class='smv'>"+D.toBeContacted+"</div><div class='sml'>To Be Contacted</div></div>";
-  for(var m=0;m<METRICS.length;m++){
-    var tot=0;
-    if(METRICS[m].key==='approved'){tot=totalApproved;}
-    else{for(var t=0;t<TEAMS.length;t++)tot+=TEAMS[t][METRICS[m].key];}
-    sh+="<div class='summary-metric "+METRICS[m].css+"'><div class='smv'>"+tot+"</div><div class='sml'>"+METRICS[m].label+"</div></div>";
-  }
+  sh+="<div class='summary-metric approved'><div class='smv'>"+totalApproved+"</div><div class='sml'>Approved</div></div>";
+  sh+="<div class='summary-metric pipeline'><div class='smv'>"+D.totalPipeline+"</div><div class='sml'>In the Pipeline</div></div>";
+  sh+="<div class='summary-metric rejected'><div class='smv'>"+D.totalRejected+"</div><div class='sml'>Rejected</div></div>";
+  sh+="<div class='summary-metric opted-out'><div class='smv'>"+D.totalOptedOut+"</div><div class='sml'>Opted Out</div></div>";
   document.getElementById("sg").innerHTML=sh;
 
   // Site summaries
@@ -288,25 +285,6 @@ function render(D){
   }
   renderSite(D.siteMission,"siteMission","Mission");
   renderSite(D.siteDouglas,"siteDouglas","Douglas (El Segundo)");
-
-  // Team cards
-  var tc2="";
-  for(var t=0;t<TEAMS.length;t++){
-    var team=TEAMS[t];
-    tc2+="<div class='team-card anim'><div class='team-header'>"+
-      "<div class='team-name'>"+team.name+" <span class='team-site'>"+team.site+"</span></div></div><div class='team-metrics'>";
-    for(var m=0;m<METRICS.length;m++){
-      var v=team[METRICS[m].key];
-      tc2+="<div class='tmr "+METRICS[m].css+"'><span class='dot'></span><span class='mn'>"+METRICS[m].label+"</span><span class='mval'>"+v+"</span>";
-      if(METRICS[m].hasTarget){
-        var target=TGT[METRICS[m].key],tp=Math.min(100,Math.round((v/target)*100));
-        tc2+="<div class='mini-track'><div class='mini-fill' style='width:"+tp+"%'></div></div><span class='mini-target-label'>/"+target+"</span>";
-      }
-      tc2+="</div>";
-    }
-    tc2+="</div></div>";
-  }
-  document.getElementById("tg").innerHTML=tc2;
 }
 
 function renderFpChart(data,uniqueCount,chartId,badgeId,peakId){
