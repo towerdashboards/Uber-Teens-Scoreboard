@@ -1,108 +1,25 @@
 {
-  "lastUpdated": "2026-04-10T16:24:44.510048",
+  "lastUpdated": "2026-04-13T23:05:29.712Z",
   "approvedTarget": 500,
-  "teamTargets": {
-    "approved": 100,
-    "pipeline": 200
-  },
-  "totalApproved": 15,
-  "toBeContacted": 9,
+  "totalApproved": 56,
+  "totalPipeline": 584,
+  "totalRejected": 4,
+  "totalOptedOut": 71,
+  "toBeContacted": 264,
   "siteMission": {
-    "tbc": 4,
-    "approved": 6,
-    "pipeline": 262,
-    "optedOut": 13,
-    "rejected": 4
+    "tbc": 144,
+    "approved": 36,
+    "pipeline": 274,
+    "optedOut": 17,
+    "rejected": 3
   },
   "siteDouglas": {
-    "tbc": 5,
-    "approved": 9,
-    "pipeline": 217,
-    "optedOut": 31,
+    "tbc": 120,
+    "approved": 19,
+    "pipeline": 305,
+    "optedOut": 54,
     "rejected": 1
   },
-  "teams": [
-    {
-      "name": "Enrique",
-      "site": "Mission",
-      "pipeline": 19,
-      "approved": 1,
-      "rejected": 0,
-      "optedOut": 1
-    },
-    {
-      "name": "Eric",
-      "site": "Douglas",
-      "pipeline": 1,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
-    },
-    {
-      "name": "Jonthan",
-      "site": "Mission",
-      "pipeline": 0,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
-    },
-    {
-      "name": "Jorge",
-      "site": "Mission",
-      "pipeline": 66,
-      "approved": 1,
-      "rejected": 0,
-      "optedOut": 1
-    },
-    {
-      "name": "Markese",
-      "site": "Mission",
-      "pipeline": 0,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
-    },
-    {
-      "name": "Nicholas",
-      "site": "Douglas",
-      "pipeline": 185,
-      "approved": 3,
-      "rejected": 2,
-      "optedOut": 28
-    },
-    {
-      "name": "Romeo",
-      "site": "Mission",
-      "pipeline": 146,
-      "approved": 1,
-      "rejected": 1,
-      "optedOut": 8
-    },
-    {
-      "name": "Sheryl",
-      "site": "Mission",
-      "pipeline": 0,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
-    },
-    {
-      "name": "Destiny",
-      "site": "Mission",
-      "pipeline": 0,
-      "approved": 0,
-      "rejected": 0,
-      "optedOut": 0
-    },
-    {
-      "name": "David",
-      "site": "Mission",
-      "pipeline": 35,
-      "approved": 2,
-      "rejected": 0,
-      "optedOut": 5
-    }
-  ],
   "dailyApproved": {
     "labels": [
       "Mar 23",
@@ -146,27 +63,27 @@
       "Apr 30"
     ],
     "counts": [
+      0,
+      0,
+      1,
+      0,
       3,
+      0,
       1,
       0,
       1,
-      2,
-      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
       3,
-      1,
       0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      6,
+      29,
+      11,
       0,
       0,
       0,
@@ -190,51 +107,51 @@
   "fingerprinting": {
     "mission": {
       "hourly": [
-        20,
-        26,
-        27,
-        5,
-        23,
-        9,
-        15,
-        0,
-        4,
-        12,
-        12,
-        10,
-        19,
-        17,
-        26,
-        11,
+        18,
+        28,
         23,
         7,
+        19,
+        13,
+        9,
+        6,
+        4,
+        12,
+        11,
+        10,
+        17,
+        16,
+        20,
+        15,
+        14,
+        16,
         12
       ],
-      "unique": 164
+      "unique": 158
     },
     "douglas": {
       "hourly": [
-        17,
-        12,
+        13,
         9,
+        8,
         10,
         17,
-        7,
-        1,
+        5,
         0,
-        9,
+        0,
         8,
-        9,
-        10,
-        22,
-        17,
-        10,
-        10,
+        7,
         8,
-        4,
+        10,
+        16,
+        9,
+        3,
+        8,
+        5,
+        2,
         0
       ],
-      "unique": 116
+      "unique": 84
     }
   }
 }
